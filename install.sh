@@ -24,7 +24,7 @@ git config --global push.default simple
 git config --global pull.rebase true
 mkdir -p ~/area9 && cd ~/area9
 git clone https://github.com/area9innovation/flow9.git
-sudo apt install curl
+sudo apt install curl -y
 curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
 rm -rf flow9
 git clone https://github.com/area9innovation/flow9.git

@@ -12,38 +12,63 @@ createQtScript() {
 			gui.clickButton(buttons.NextButton, 10000);
 		}
 		Controller.prototype.CredentialsPageCallback = function() {
-				var page = gui.pageWidgetByObjectName("CredentialsPage");
-	EOF
-	if [ $3 != 1 ]
-	then
-		cat <<- EOF >> non-interactive-install.qs
-				page.loginWidget.EmailLineEdit.setText("$1");
-				page.loginWidget.PasswordLineEdit.setText("$2");
-		EOF
-	else
-		cat <<- EOF >> non-interactive-install.qs
-				page.signUpWidget.EmailLineEdit.setText("$1");
-				page.signUpWidget.PasswordLineEdit.setText("$2");
-				page.signUpWidget.PasswordConfirmLineEdit.setText("$2");
-				page.signUpWidget.serviceTermsCheckBox.checked = true;
-		EOF
-	fi
-	cat <<- EOF >> non-interactive-install.qs
+			var page = gui.pageWidgetByObjectName("CredentialsPage");
+			page.loginWidget.EmailLineEdit.setText("$1");
+			page.loginWidget.PasswordLineEdit.setText("$2");
 			gui.clickButton(buttons.NextButton);
+		}
+		Controller.prototype.IntroductionPageCallback = function() {
+			gui.clickButton(buttons.NextButton);
+		}
+		Controller.prototype.LicenseAgreementPageCallback = function() {
+			gui.currentPageWidget().AcceptLicenseRadioButton.setChecked(true);
+			gui.clickButton(buttons.NextButton);
+		}
+		Controller.prototype.TargetDirectoryPageCallback = function() {
+			gui.currentPageWidget().TargetDirectoryLineEdit.setText("/opt/Qt/5.12.0");
+			gui.clickButton(buttons.NextButton);
+		}
+		Controller.prototype.ComponentSelectionPageCallback = function() {
+			var widget = gui.currentPageWidget();
+			widget.selectAll();
+			gui.clickButton(buttons.NextButton);
+		}
+		Controller.prototype.ReadyForInstallationPageCallback = function() {
+			gui.clickButton(buttons.NextButton);
+		}
+		Controller.prototype.FinishedPageCallback = function() {
+			var checkBoxForm = gui.currentPageWidget().LaunchQtCreatorCheckBoxForm;
+			if (checkBoxForm && checkBoxForm.launchQtCreatorCheckBox) {
+				checkBoxForm.launchQtCreatorCheckBox.checked = false;
+			}
+			gui.clickButton(buttons.FinishButton);
 		}
 	EOF
 }
 
-createQtAccount=0
-while getopts "u:p:c" opt
+username="";
+password="";
+while getopts "u:p:" opt
 do 
 case $opt in 
 	u) username=${OPTARG};;
 	p) password=${OPTARG};;
-	c) createQtAccount=1;;
 esac
 done
 echo ${username}
 echo ${password}
-echo ${createQtAccount}
-createQtScript ${username} ${password} ${createQtAccount}
+if [ "${username}" != "" ] && [ "${password}" != "" ]
+then
+	createQtScript ${username} ${password}
+else
+	echo "You will have to create QtAccount to proceed. Quit the installation and create in on your own or proceed and follow the instructions in the wizard"
+	echo "Important: if you choose proceeding with the wizard put /opt/Qt/5.12.0 as an installation path"
+	while true; do
+		read -p "Would you like to proceed? " yn
+		case $yn in
+			[Yy]* ) echo "proceed"; break;;
+			[Nn]* ) exit;;
+			* ) echo "Please provide y/n answer";;
+		esac
+	done
+fi

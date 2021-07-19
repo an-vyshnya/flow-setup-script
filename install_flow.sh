@@ -54,10 +54,11 @@ createQtScript() {
 
 qtEmail=""
 qtPassword=""
+DIR=pwd
 
 # store variables here and source it to other locations
-touch $HOME/.env
-echo "source $HOME/.env" | tee -a $HOME/.bashrc $HOME/.profile
+touch $DIR/.env
+echo "source $DIR/.env" | tee -a $DIR/.bashrc $DIR/.profile
 
 # add specific repositories
 sudo add-apt-repository -yu ppa:ondrej/php
@@ -69,22 +70,22 @@ sudo apt install -y php7.2 php7.2-mysql php7.2-mbstring php-xdebug libapache2-mo
 curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
 
 # folders and repos setup
-mkdir $HOME/area9
-cd $HOME/area9 && git clone https://github.com/area9innovation/flow9.git
-cd $HOME/area9/flow9/platforms/common/cpp && git clone http://git@github.com/area9innovation/asmjit.git && git checkout next
+mkdir $DIR/area9
+cd $DIR/area9 && git clone https://github.com/area9innovation/flow9.git
+cd $DIR/area9/flow9/platforms/common/cpp && git clone http://git@github.com/area9innovation/asmjit.git && git checkout next
 
 # haxe and neko
-mkdir $HOME/haxelib 
-haxelib setup $HOME/haxelib
+mkdir $DIR/haxelib 
+haxelib setup $DIR/haxelib
 printf 'export HAXE_STD_PATH=/usr/share/haxe/std
-export FLOW=$HOME/area9/flow9
-export PATH=$FLOW/bin:$PATH\n' >> $HOME/.env
-source $HOME/.env
+export FLOW=$DIR/area9/flow9
+export PATH=$FLOW/bin:$PATH\n' >> $DIR/.env
+source $DIR/.env
 haxelib install format 3.4.2
 haxelib install pixijs 4.8.4
 printf 'export NEKOPATH=/usr/lib/x86_64-linux-gnu/neko
-export PATH=$NEKOPATH:$PATH\n' >> $HOME/.env
-source $HOME/.env
+export PATH=$NEKOPATH:$PATH\n' >> $DIR/.env
+source $DIR/.env
 echo '/usr/bin/neko' | sudo tee -a /etc/ld.so.conf.d/flow.conf
 sudo ldconfig
 
@@ -98,7 +99,7 @@ sudo a2enconf area9
 sudo service apache2 restart
 
 #qt
-cd $HOME && wget https://download.qt.io/archive/qt/5.12/5.12.0/qt-opensource-linux-x64-5.12.0.run
+cd $DIR && wget https://download.qt.io/archive/qt/5.12/5.12.0/qt-opensource-linux-x64-5.12.0.run
 chmod +x qt-opensource-linux-x64-5.12.0.run
 echo "To proceed you need to have a Qt account. If you don't have it, please create it beforehand (recommended) or complete the Qt installation manually"
 while true; do
@@ -113,12 +114,12 @@ if [ "${qtAccount}" = 1 ]
 then
 	getQtCredentials
 	createQtScript ${qtEmail} ${qtPassword}
-	~/qt-opensource-linux-x64-5.12.0.run --script ~/non-interactive-install.qs
+	$DIR/qt-opensource-linux-x64-5.12.0.run --script $DIR/non-interactive-install.qs
 else
-	~/qt-opensource-linux-x64-5.12.0.run
+	$DIR/qt-opensource-linux-x64-5.12.0.run
 fi
 qtchooser -install qt512 /opt/Qt/5.12.0/5.12.0/gcc_64/bin/qmake
-echo "export QT_SELECT=qt512" >> $HOME/.env && source $HOME/.env
+echo "export QT_SELECT=qt512" >> $DIR/.env && source $HOME/.env
 
 #build
 cd $FLOW/platforms/qt && ./build.sh

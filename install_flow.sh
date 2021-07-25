@@ -7,7 +7,7 @@ getQtCredentials() {
 }
 
 createQtScript() {
-	cat <<- EOF > $HOME/non-interactive-install.qs
+	cat <<- EOF > /home/$USER/non-interactive-install.qs
 		function Controller() {
 			installer.autoRejectMessageBoxes();
 			installer.installationFinished.connect(function() {
@@ -56,8 +56,8 @@ qtEmail=""
 qtPassword=""
 
 # store variables here and source it to other locations
-touch $HOME/.env
-echo "source $HOME/.env" | tee -a $HOME/.bashrc $HOME/.profile
+touch /home/$USER/.env
+echo "source /home/$USER/.env" | tee -a /home/$USER/.bashrc /home/$USER/.profile
 
 # add specific repositories
 sudo add-apt-repository -yu ppa:ondrej/php
@@ -69,28 +69,28 @@ sudo apt install -y php7.2 php7.2-mysql php7.2-mbstring php-xdebug libapache2-mo
 curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
 
 # folders and repos setup
-mkdir $HOME/area9
-cd $HOME/area9 && git clone https://github.com/area9innovation/flow9.git
-cd $HOME/area9/flow9/platforms/common/cpp && git clone http://git@github.com/area9innovation/asmjit.git && git checkout next
+mkdir /home/$USER/area9
+cd /home/$USER/area9 && git clone https://github.com/area9innovation/flow9.git
+cd /home/$USER/area9/flow9/platforms/common/cpp && git clone http://git@github.com/area9innovation/asmjit.git && git checkout next
 
 # haxe and neko
-mkdir $HOME/haxelib 
-haxelib setup $HOME/haxelib
+mkdir /home/$USER/haxelib 
+haxelib setup /home/$USER/haxelib
 printf 'export HAXE_STD_PATH=/usr/share/haxe/std
-export FLOW=$DIR/area9/flow9
-export PATH=$FLOW/bin:$PATH\n' >> $HOME/.env
-source $HOME/.env
+export FLOW=/home/$USER/area9/flow9
+export PATH=$FLOW/bin:$PATH\n' >> /home/$USER/.env
+source /home/$USER/.env
 haxelib install format 3.4.2
 haxelib install pixijs 4.8.4
 printf 'export NEKOPATH=/usr/lib/x86_64-linux-gnu/neko
-export PATH=$NEKOPATH:$PATH\n' >> $HOME/.env
-source $HOME/.env
+export PATH=$NEKOPATH:$PATH\n' >> /home/$USER/.env
+source /home/$USER/.env
 echo '/usr/bin/neko' | sudo tee -a /etc/ld.so.conf.d/flow.conf
 sudo ldconfig
 
 # apache
-printf 'Alias "/flow" "'$HOME'/area9/flow9/www/"
-<Directory '$HOME'/area9/flow9/www/>
+printf 'Alias "/flow" "/home/'$USER'/area9/flow9/www/"
+<Directory /home/'$USER'/area9/flow9/www/>
      AllowOverride All
      Require local
 </Directory>\n' | sudo tee /etc/apache2/conf-available/area9.conf
@@ -98,7 +98,7 @@ sudo a2enconf area9
 sudo service apache2 restart
 
 #qt
-cd $HOME && wget https://download.qt.io/archive/qt/5.12/5.12.0/qt-opensource-linux-x64-5.12.0.run
+cd /home/$USER/ && wget https://download.qt.io/archive/qt/5.12/5.12.0/qt-opensource-linux-x64-5.12.0.run
 chmod +x qt-opensource-linux-x64-5.12.0.run
 echo "To proceed you need to have a Qt account. If you don't have it, please create it beforehand (recommended) or complete the Qt installation manually"
 while true; do
@@ -113,12 +113,12 @@ if [ "${qtAccount}" = 1 ]
 then
 	getQtCredentials
 	createQtScript ${qtEmail} ${qtPassword}
-	$HOME/qt-opensource-linux-x64-5.12.0.run --script $HOME/non-interactive-install.qs
+	/home/$USER/qt-opensource-linux-x64-5.12.0.run --script /home/$USER/non-interactive-install.qs
 else
-	$HOME/qt-opensource-linux-x64-5.12.0.run
+	/home/$USER/qt-opensource-linux-x64-5.12.0.run
 fi
 qtchooser -install qt512 /opt/Qt/5.12.0/5.12.0/gcc_64/bin/qmake
-echo "export QT_SELECT=qt512" >> $HOME/.env && source $HOME/.env
+echo "export QT_SELECT=qt512" >> /home/$USER/.env && source /home/$USER/.env
 
 #build
 cd $FLOW/platforms/qt && ./build.sh

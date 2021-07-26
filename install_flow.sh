@@ -125,7 +125,7 @@ cd $FLOW/platforms/qt && ./build.sh
 
 #restart
 echo "The installation is completed. Please restart your machine to start using flow"
-rebootNow=0;
+rebootNow=0
 while true; do
 	read -p "Would you like restart now?[y/n] " yn
 	case $yn in

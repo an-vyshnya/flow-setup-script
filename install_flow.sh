@@ -123,5 +123,20 @@ echo "export QT_SELECT=qt512" >> /home/$USER/.env && source /home/$USER/.env
 #build
 cd $FLOW/platforms/qt && ./build.sh
 
-#final note
+#restart
 echo "The installation is completed. Please restart your machine to start using flow"
+rebootNow=0;
+while true; do
+	read -p "Would you like restart now?[y/n] " yn
+	case $yn in
+		[Yy]* ) rebootNow=1; break;;
+		[Nn]* ) rebootNow=0; break;;
+		* ) echo "Please answer yes or no";;
+	esac
+done
+rm -f /home/$USER/qt-opensource-linux-x64-5.12.0.run
+rm -f /home/$USER/non-interactive-install.qs
+if [ "${rebootNow}" = 1 ] 
+then
+	sudo reboot
+fi

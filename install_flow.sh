@@ -122,3 +122,6 @@ echo "export QT_SELECT=qt512" >> /home/$USER/.env && source /home/$USER/.env
 
 #build
 cd $FLOW/platforms/qt && ./build.sh
+
+#final note
+echo "The installation is completed. Please restart your machine to start using flow"

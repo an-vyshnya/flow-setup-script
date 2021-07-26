@@ -115,6 +115,10 @@ then
 	createQtScript ${qtEmail} ${qtPassword}
 	/home/$USER/qt-opensource-linux-x64-5.12.0.run --script /home/$USER/non-interactive-install.qs
 else
+	echo "Please proceed with Qt installation manually. Make sure you:"
+	echo "- install all components"
+	echo "- pick /opt/Qt/5.10.12 as the installation path"
+	echo "- do not launch qt creator"
 	/home/$USER/qt-opensource-linux-x64-5.12.0.run
 fi
 qtchooser -install qt512 /opt/Qt/5.12.0/5.12.0/gcc_64/bin/qmake
